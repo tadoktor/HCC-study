@@ -136,29 +136,6 @@ collapsibleTree(df=GENE, c("lhs","Major","Minor","Parent.Name"),  fill = "green"
 GENE1<- filter(merge_all,lhs == "XRCC1")
 collapsibleTree(df=GENE1, c("lhs","Major","Minor","Parent.Name"),  fill = "green")
 
-#igraph 
-#Gene major subset visualisation
-
-gene_major_subset <- unique(gene_major_subset[,2:1])
-colnames(gene_major_subset) <- c("V1", "V2")
-g <- graph.data.frame(gene_major_subset)
-E(g)$curved <- 0
-E(g)$label <- rep(1, nrow(gene_major_subset))
-
-g <- simplify(g, remove.multiple = T, remove.loops = T)
-plot.igraph(g, vertex.size=0, edge.arrow.size=0 ,
-            layout=-layout.reingold.tilford(g)[,2:1])
-l <- layout_with_kk(g)
-
-tkplot(g, canvas.width = 1500, canvas.height = 1000,edge.arrow.size=.2, edge.color="orange",
-       vertex.color="orange", vertex.frame.color="#ffffff",
-       vertex.label=V(g)$Major, vertex.label.font=6, vertex.label.color="black", edge.curved=.1, layout=l*2.0, dim=3)
-tkplot(g, canvas.width = 1500, canvas.height = 750, vertex.color="lightpink", vertex=10, size=8, vertex.size=5)
-
-library (rgl)
-rglplot(g, canvas.width = 1500, canvas.height = 1000,edge.arrow.size=.2, edge.color="orange",
-        vertex.color="orange", vertex.frame.color="#ffffff",
-        vertex.label=V(g)$Major, vertex.label.font=6, vertex.label.color="black", edge.curved=.1, layout=l*2.0)
 
 
 
