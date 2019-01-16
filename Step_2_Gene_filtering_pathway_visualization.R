@@ -5,7 +5,8 @@
 ####            
 #####################################################################
 
-
+library(shiny)
+#install.packages("C:\\Users\\tatyana\\Documents\\Advance project\\shiny_1.1.0.tar.gz", repos = NULL, type="source")
 library(igraph)
 library (dplyr)
 library(VennDiagram)
@@ -19,11 +20,11 @@ library(RColorBrewer)
 
 setwd("C:\\Users\\tatyana\\Documents\\Projects\\Advance project")
 
-#Upload disease relevant files
+#AWF: If the files are to be run in a workflow this step is not needed: Upload disease relevant files
 
-TC_perc <- read.csv("file:///C:/Users/tatyana/Documents/Projects/Advance project/TC_perc.txt",sep = '\t', header=TRUE)
-CTD_perc <- read.csv("file:///C:/Users/tatyana/Documents/Projects/Advance project/CTD_perc.txt",sep = '\t', header=TRUE)
-CTDTC_perc <- read.csv("file:///C:/Users/tatyana/Documents/Projects/Advance project/CTDTC_perc.txt",sep = '\t', header=TRUE)
+#TC_perc <- read.csv("file:///C:/Users/tatyana/Documents/Projects/Advance project/TC_perc.txt",sep = '\t', header=TRUE)
+#CTD_perc <- read.csv("file:///C:/Users/tatyana/Documents/Projects/Advance project/CTD_perc.txt",sep = '\t', header=TRUE)
+#CTDTC_perc <- read.csv("file:///C:/Users/tatyana/Documents/Projects/Advance project/CTDTC_perc.txt",sep = '\t', header=TRUE)
 
 #Select the unique categories of interest
 
@@ -64,16 +65,15 @@ CTDTC_CTD_overlap_df <- as.data.frame(CTDTC_CTD_overlap)
 
 #Merge the genes plus respective pathway info together
 merge_all<-unique(rbindlist(list(CTD_perc_parent,TC_perc_parent,CTDTC_perc_parent)))
-write.csv(merge_all, file="HCC_Toxcast_CTD.csv")
+#write.csv(merge_all, file="HCC_Toxcast_CTD.csv")
+HCC_Toxcast_CTD<-as.data.frame (merge_all)
 
 ALL = merge_all %>% distinct(lhs)
-#ifelse(merge_all$Parent.Name==merge_all$Minor,1)
-
 gene_major_subset<-unique(data.frame(merge_all$"lhs",merge_all$"Major"))
 
 
-library(shiny)
-#install.packages("C:\\Users\\tatyana\\Documents\\Advance project\\shiny_1.1.0.tar.gz", repos = NULL, type="source")
+## Visualization: 1 
+###Tree diagram visualization starting with Major/Minor/Parent_Name/gene
 
 merge_all$pathString <- paste("All pathways_gene relationships", 
                             merge_all$Major, 
@@ -83,21 +83,10 @@ merge_all$pathString <- paste("All pathways_gene relationships",
 tree_diagram <- as.Node(merge_all)
 print(tree_diagram)
 #export_graph(ToDiagrammeRGraph(tree_diagram), "All_pathways_gene_relationships.pdf")
-write.csv(tree_diagram, file="All_pathways_gene_relationships.csv")
-write.table(tree_diagram, file="All_pathways_gene_relationships.txt", sep = "\t")
+#write.csv(tree_diagram, file="All_pathways_gene_relationships.csv")
+#write.table(tree_diagram, file="All_pathways_gene_relationships.txt", sep = "\t")
 
-
-merge_all$pathString <- paste("Key pathway_gene relationships", 
-                              merge_all$Major, 
-                              merge_all$Minor,    merge_all$lhs,
-                              sep = "/")
-
-tree_diagram <- as.Node(merge_all)
-print(tree_diagram)
-export_graph(ToDiagrammeRGraph(tree_diagram), "Key_pathway_gene_relationships.pdf")
-write.csv(tree_diagram, file="Key_pathway_gene_relationships.csv")
-write.table(tree_diagram, file="Key_pathway_gene_relationships.txt", sep = "\t")
-
+### Tree diagram visualization starting with gene/Major category
 
 merge_all$pathString <- paste("Key gene_major pathway relationships", 
                               merge_all$lhs,merge_all$Major, 
@@ -106,38 +95,20 @@ merge_all$pathString <- paste("Key gene_major pathway relationships",
 tree_diagram <- as.Node(merge_all)
 print(tree_diagram)
 
-write.csv(tree_diagram, file="Key_gene_major_pathway relationships.csv")
-write.table(tree_diagram, file="Key_gene_major_pathway relationships.txt", sep = "\t")
-export_graph(ToDiagrammeRGraph(tree_diagram), "Key_gene_major_pathway_relationships.pdf")
+#write.csv(tree_diagram, file="Key_gene_major_pathway relationships.csv")
+#write.table(tree_diagram, file="Key_gene_major_pathway relationships.txt", sep = "\t")
+#export_graph(ToDiagrammeRGraph(tree_diagram), "Key_gene_major_pathway_relationships.pdf")
 
-
+ ##Visualization 2: Collapsible tree (interactive)
+### Visualization of all HCC data
 HCC<-data.frame(merge_all)
-
-#tree diagram (interactive)
-
-
 collapsibleTree(df=HCC, c("Major", "Minor","Parent.Name", "lhs"),  fill = "lightgreen")
-             
-
-collapsibleTree(df=merge_all, c("Major",  "lhs"),  fill = "lightpink")
-                
-                
+collapsibleTree(df=merge_all, c("Major",  "lhs"),  fill = "lightpink")             
 collapsibleTree(df=merge_all, c("lhs","Parent.Name","Minor","Major"),  fill = "green")
 
-
-gene_subset<-unique(data.frame(merge_all$"lhs"))
-
-major_subset<-unique(data.frame(merge_all$"Major"))
-
-minor_subset<-unique(data.frame(merge_all$"Minor"))
-
-
+###Visualization of individual genes within the HCC subset
 GENE<- filter(merge_all,lhs == "ACTB")
 collapsibleTree(df=GENE, c("lhs","Major","Minor","Parent.Name"),  fill = "green")
 
 GENE1<- filter(merge_all,lhs == "XRCC1")
 collapsibleTree(df=GENE1, c("lhs","Major","Minor","Parent.Name"),  fill = "green")
-
-
-
-
