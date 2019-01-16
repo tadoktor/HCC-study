@@ -1,6 +1,7 @@
 ###Author: Noffisat Oki
 ###Description:
-
+### - Data retrival from TG Gates on a set of pre-selected chemicals.
+###   In this particular example we extract human in vitro data for 10 NC.
 
 #install.packages(magrittr)
 #install.packages('jsonlite')
