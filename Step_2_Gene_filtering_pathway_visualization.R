@@ -1,7 +1,12 @@
 #Author: Tatyana Doktorova and Noffisat Oki
 #Version: 12_12_2018
 # The script filters the most important genes and facilitates their visulaisation
-
+# Description: Disease selection
+####            - filtering according to disease of interest
+####            - this example is for HCC
+####            - the lift can be adjusted appropriately in order to end up with similar number of output categories
+###             - visualization according to major/minor categories is done
+#####################################################################
 
 
 library(igraph)
