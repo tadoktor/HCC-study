@@ -1,3 +1,8 @@
+###Author: Noffisat Oki
+###Description:
+### - Data retrival from TG Gates on a set of pre-selected chemicals.
+###   In this particular example we extract human in vitro data for 10 NGTX.
+
 #install.packages(magrittr)
 #install.packages('jsonlite')
 #install.packages(httr)
@@ -63,6 +68,9 @@ select_samples <- Samples[,c("sampleId","compoundName", "timepointHr")]
 
 
 ###Getting HCC compounds present in TGG
+
+###Adjust the directory accordingly
+
 HCC_chem_data <- read.table(paste(Root_location,"/InputFiles/Non_genotoxic_carcinogens_Advance_updated.txt",sep=''),sep='\t',header=T,comment.char='',strip.white=T)
 newcat <- which(caslist2$Casrn %in% HCC_chem_data$Cas.number)
 newcat2 <- caslist2[newcat,]
