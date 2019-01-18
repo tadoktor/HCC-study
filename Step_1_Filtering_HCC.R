@@ -22,7 +22,8 @@ Root_location <- "/home/dimiter/Desktop/Advance"
 outDir <- paste(Root_location, "/OutputFiles/", sep='')
 
 ################################# Chemical X Gene data ##################
-##Import the 3 overview files coming as a result of the ToxCast/CTD relationship code (https://github.com/DouglasConnect/advance). The files are available
+##Import the 3 overview files coming as a result of the ToxCast/CTD relationship code (https://github.com/DouglasConnect/advance).
+####The files are available for download as well here: 
 
 
 TC <- read.table(paste(Root_location,"/OutputFiles/TC_ALLChem_Gene_protein_pathway_disease_associations.txt", sep=''), header=TRUE, sep='\t', comment.char='', quote='', fill=TRUE, strip.white=TRUE, colClasses="character")
