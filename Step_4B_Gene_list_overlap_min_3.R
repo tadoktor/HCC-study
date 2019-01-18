@@ -2,30 +2,80 @@
 ####Author: Noffisat Oki, Tatyana Doktorova
 ####Version: 1.0 08-28-2018
 ####Description: GTX Subset script:
+####             The script uses the information extracted from TG Gates and 
+###              filtering of interesting genes according to fold change and p-value.
 ####             Subsets chemical-gene data to filter for only genes active
 ####             in at least 3 chemicals 
-###               Reannotation to Ensemb Identifier and visualizations
+###              Reannotation to Ensemb Identifier and visualizations
 ####             
 ####Notes: The path to the 'ADVANCE_Project' project folder should be modified to user specified 
 ####       locations for proper execution of the script. The 'Root_location' object on line 20
 ####       should be used for this purpose.
 ####Potential issues:
-#####################################################################
-
-library(plyr)
-library(data.table)
-library(reshape2)
 
 ##The root location folder should be specified here. 
 #This is the main folder where any subfolders from which data will be read from or written to are located
 Root_location <- "C:\\Users\\tatyana\\Documents\\Projects\\Advance project\\Advance"
 
-
 ##Output directory
 outDir <- paste(Root_location, "/IntermediateData/", sep='')
 
-################################# Chemical X Gene data ##################
-GTX_chemgene_data.long <- read.csv(paste(Root_location,"/InputFiles/GTX_specific.csv", sep=''), header=TRUE, sep=',', strip.white=TRUE, fill=TRUE)#, comment.char='', quote='', fill=TRUE, strip.white=TRUE , colClasses="character")
+# Install libraries
+library(data.table)
+library(reshape2)
+library("biomaRt")
+library("dplyr")
+library(collapsibleTree)
+
+#Generation of GTX list of genes
+
+TG_Gates_human_log2fold_GTX<- read.table("file:///C:/Users/tatyana/Documents/Advance project/TGG_HCC_data_log2fold_human_GTX.txt", header=TRUE)
+GTX_sampleID<- read.table("file:///C:/Users/tatyana/Documents/Advance project/TGG_in_HCC_samples_GTX.txt", header=TRUE)
+HCC_Toxcast_CTD<-read.csv("file:///C:/Users/tatyana/Documents/Advance project/HCC_Toxcast_CTD.csv", header=TRUE)
+Unique_genes = HCC_Toxcast_CTD %>% distinct(lhs)
+
+GTX_all<-merge(TG_Gates_human_log2fold_GTX,GTX_sampleID, by.x="sampleId",by.y="sampleId")
+
+GTX_filtering<-GTX_all[!is.na(GTX_all$pvalue),]
+
+GTX_pval0.05<- GTX_filtering[GTX_filtering$pvalue<0.05,]
+GTX_pval0.05_FC_up_1<-GTX_pval0.05[GTX_pval0.05$ value > 0.58,]
+GTX_pval0.05_FC_down_1<-GTX_pval0.05[GTX_pval0.05$ value < -0.58,]
+GTX_specific<- rbind(GTX_pval0.05_FC_down_1,GTX_pval0.05_FC_up_1)
+#write.csv(GTX_significant, file="GTX_specific.csv")
+
+#Generation of NGTX list of genes
+TG_Gates_human_log2fold_NGTX<- read.table("file:///C:/Users/tatyana/Documents/Advance project/TGG_HCC_data_log2fold_human_NGTX.txt", header=TRUE)
+NGTX_sampleID<- read.table("file:///C:/Users/tatyana/Documents/Advance project/TGG_in_HCC_samples_NGTX.txt", header=TRUE)
+
+NGTX_all<-merge(TG_Gates_human_log2fold_NGTX,NGTX_sampleID, by.x="sampleId",by.y="sampleId")
+
+NGTX_filtering<-NGTX_all[!is.na(NGTX_all$pvalue),]
+                                             
+NGTX_pval0.05<- NGTX_filtering[NGTX_filtering$pvalue<0.05,]
+NGTX_pval0.05_FC_up_1<-NGTX_pval0.05[NGTX_pval0.05$ value > 0.58,]
+NGTX_pval0.05_FC_down_1<-NGTX_pval0.05[NGTX_pval0.05$ value < -0.58,]
+NGTX_specific<- rbind(NGTX_pval0.05_FC_down_1,NGTX_pval0.05_FC_up_1)
+#write.csv(NGTX_significant, file="NGTX_specific.csv")
+
+#Generation of NC list of genes
+TG_Gates_human_log2fold_NC<- read.table("file:///C:/Users/tatyana/Documents/Advance project/TGG_HCC_data_log2fold_human_NC.txt", header=TRUE)
+NC_sampleID<- read.table("file:///C:/Users/tatyana/Documents/Advance project/TGG_in_HCC_samples_NC.txt", header=TRUE)
+#merge the two sources and remove NA values
+NC_all<-merge(TG_Gates_human_log2fold_NC,NC_sampleID, by.x="sampleId",by.y="sampleId")
+
+NC_filtering<-NC_all[!is.na(NC_all$pvalue),]
+
+NC_pval0.05<- NC_filtering[NC_filtering$pvalue<0.05,]
+NC_pval0.05_FC_up_1<-NC_pval0.05[NC_pval0.05$ value > 0.58,]
+NC_pval0.05_FC_down_1<-NC_pval0.05[NC_pval0.05$ value < -0.58,]
+NC_specific<- rbind(NC_pval0.05_FC_down_1,NC_pval0.05_FC_up_1)
+#write.csv(NC_significant, file="NC_specific.csv")
+
+
+
+################################# GTX _2/3 chemicals with same gene data ##################
+GTX_chemgene_data.long <- as.data.frame (GTX_specific)
 ##reformatting the data
 GTX_chemgene_data.wide <- dcast(GTX_chemgene_data.long, TGG_compoundName ~ assayId , value.var="geneSymbols")
 recoding_GTX_chemgene_data.wide <- (GTX_chemgene_data.wide)
@@ -59,8 +109,8 @@ mapping_GTX <- getBM(attributes = c("affy_hg_u133_plus_2",
 GTX_GL_final <- mapping_GTX[!duplicated(mapping_GTX[,3]),] 
 
 
-################################# NGTX Chemical X Gene data ##################
-NGTX_chemgene_data.long <- read.csv(paste(Root_location,"/InputFiles/NGTX_specific.csv", sep=''), header=TRUE, sep=',', strip.white=TRUE, fill=TRUE)#, comment.char='', quote='', fill=TRUE, strip.white=TRUE , colClasses="character")
+################################# GTX _2/3 chemicals with same gene data##################
+NGTX_chemgene_data.long <- as.data.frame (NGTX_specific)
 ##reformatting the data
 NGTX_chemgene_data.wide <- dcast(NGTX_chemgene_data.long, TGG_compoundName ~ assayId , value.var="geneSymbols")
 recoding_NGTX_chemgene_data.wide <- (NGTX_chemgene_data.wide)
@@ -95,7 +145,7 @@ NGTX_GL_final <- mapping_NGTX[!duplicated(mapping_NGTX[,3]),]
 
 
 ################################# NC Chemical X Gene data ##################
-NC_chemgene_data.long <- read.csv(paste(Root_location,"/InputFiles/NC_specific.csv", sep=''), header=TRUE, sep=',', strip.white=TRUE, fill=TRUE)#, comment.char='', quote='', fill=TRUE, strip.white=TRUE , colClasses="character")
+NC_chemgene_data.long <- as.data.frame (NC_specific)
 ##reformatting the data
 NC_chemgene_data.wide <- dcast(NC_chemgene_data.long, TGG_compoundName ~ assayId , value.var="geneSymbols")
 recoding_NC_chemgene_data.wide <- (NC_chemgene_data.wide)
@@ -127,29 +177,22 @@ mapping_NC <- getBM(attributes = c("affy_hg_u133_plus_2",
 
 NC_GL_final <- mapping_NC[!duplicated(mapping_NC[,3]),] 
 
-
-
-
-
+######Unique gene list indentification
 GTX_GL_genes<-unique(subset(GTX_GL_final, select=c("hgnc_symbol")))
 NGTX_GL_genes<-unique(subset(NGTX_GL_final, select=c("hgnc_symbol")))
 NC_GL_genes<-unique(subset(NC_GL_final, select=c("hgnc_symbol")))
 
-
+##Common genees between GTX, NGTX, NC
 Genes_common<-intersect(GTX_GL_genes, NGTX_GL_genes,NC_GL_genes)
-
-
+                                              
+## NGTX specific genes
 NGTX_specific_1<-setdiff(NGTX_GL_genes, GTX_GL_genes)
 NGTX_specific_2<-setdiff(NGTX_GL_genes, NC_GL_genes)
 NGTX_specific<-merge(NGTX_specific_1, NGTX_specific_2)
 
 NGTX_specific<-data.frame(NGTX_specific)
 
-
-HCC_Toxcast_CTD<-read.csv("file:///C:/Users/tatyana/Documents/Projects/Advance project/HCC_Toxcast_CTD.csv", header=TRUE)
-Unique_genes = HCC_Toxcast_CTD %>% distinct(lhs)
-colnames(Unique_genes) <- c("hgnc_symbol")
-Unique_genes<-data.frame(Unique_genes)
+##Overlap between the ToxCast_CTD HCC-specific genes and TG Gates
 
 Genes_TGGATEs_CTD_Toxcast<-intersect(NGTX_specific, Unique_genes)
 
