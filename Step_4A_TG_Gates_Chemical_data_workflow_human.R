@@ -6,12 +6,11 @@
 
 #BiocInstaller::biocLite('grimbough/biomaRt')
 library(biomaRt)
-
 library("biomaRt")
 library("dplyr")
 library(collapsibleTree)
 
-#Generation of GTX list of genes
+#Upload of human TG Gates data on the 10 GTX
 
 TG_Gates_human_log2fold_GTX<- read.table("file:///C:/Users/tatyana/Documents/Projects/Advance project/TGG_HCC_data_log2fold_human_GTX.txt", header=TRUE)
 GTX_sampleID<- read.table("file:///C:/Users/tatyana/Documents/Projects/Advance project/TGG_in_HCC_samples_GTX.txt", header=TRUE)
@@ -42,6 +41,7 @@ GTX_GL_final<-merge(GTX_GL_final,GTX_sampleID)
 
 GTX_compounds_GL<-GTX_GL_final %>% distinct(TGG_compoundName)
 
+
 #Generation of NGTX list of gene
 
 TG_Gates_human_log2fold_NGTX<- read.table("file:///C:/Users/tatyana/Documents/Projects/Advance project/TGG_HCC_data_log2fold_human_NGTX.txt", header=TRUE)
@@ -70,6 +70,7 @@ NGTX_GL_final<-merge(NGTX_GL_final,NGTX_sampleID)
 NGTX_compounds_GL<-NGTX_GL_final %>% distinct(TGG_compoundName)
 
 
+
 #Generation of NC list of gene
 
 TG_Gates_human_log2fold_NC<- read.table("file:///C:/Users/tatyana/Documents/Projects/Advance project/TGG_HCC_data_log2fold_human_NC.txt", header=TRUE)
@@ -96,6 +97,7 @@ NC_GL_final <- NC_GL[!duplicated(NC_GL[,3]),]
 NC_GL_final<-merge(NC_GL_final,NC_sampleID)
 
 NC_compounds_GL<-NC_GL_final %>% distinct(TGG_compoundName)
+
 
 GTX_GL_genes<-unique(subset(GTX_GL_final, select=c("hgnc_symbol")))
 NGTX_GL_genes<-unique(subset(NGTX_GL_final, select=c("hgnc_symbol")))
