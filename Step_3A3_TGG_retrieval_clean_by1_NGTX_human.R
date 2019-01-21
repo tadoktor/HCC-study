@@ -75,7 +75,7 @@ HCC_chem_data <- read.table(paste(Root_location,"/InputFiles/Non_genotoxic_carci
 newcat <- which(caslist2$Casrn %in% HCC_chem_data$Cas.number)
 newcat2 <- caslist2[newcat,]
 TGG_in_HCC_list <- unique(merge(caslist2, HCC_chem_data,  by.x="Casrn", by.y="Cas.number" ,all.x=FALSE, all.y=FALSE))
-TGGinHCC_compoundset <- "/OutputFiles/TGG_in_HCC_compounds.txt"
+TGGinHCC_compoundset <- "/OutputFiles/TGG_in_HCC_compounds_NGTX.txt"
 write.table(TGG_in_HCC_list, paste(Root_location,TGGinHCC_compoundset,sep=''),sep="\t",row.names=F)
 
 
