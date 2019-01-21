@@ -84,7 +84,7 @@ write.table(TGG_in_HCC_list, paste(Root_location,TGGinHCC_compoundset,sep=''),se
 
 ###Selecting the sample IDs for the HCC compounds in TGG
 HCC_samples_in_TGG <- unique(merge(newcat2, Samples, by.x ="TGG_compoundName", by.y = "compoundName" ))
-HCC_in_TGG_sampleset <- "/OutputFiles/TGG_in_HCC_samples_NC.txt"
+HCC_in_TGG_sampleset <- "/OutputFiles/TGG_in_HCC_samples_rat_NC.txt"
 write.table(HCC_samples_in_TGG[,c(1:11)], paste(Root_location,HCC_in_TGG_sampleset,sep=''),sep="\t",row.names=F)
 
 sampleIDs <- unique(HCC_samples_in_TGG$sampleId)
