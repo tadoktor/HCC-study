@@ -31,6 +31,7 @@ library(collapsibleTree)
 
 
 #Generation of GTX list of genes for rat in vivo
+#The files can be derived either from the previous Step_3B1, Step_3B2, Step3_B3 or directly downloaded from this link: https://mega.nz/#F!zDBmiKyZ
 
 TG_Gates_rat_log2fold_GTX<- read.table("file:///C:/Users/tatyana/Documents/Projects/Advance project/rat HCC/TGG_data_log2fold_HCC_rat_GTX.txt", header=TRUE)
 GTX_sampleID<- read.table("file:///C:/Users/tatyana/Documents/Projects/Advance project/rat HCC/TGG_in_HCC_samples_rat_GTX.txt", header=TRUE)
