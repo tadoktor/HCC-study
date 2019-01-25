@@ -38,6 +38,7 @@ GTX_sampleID<- read.table("file:///C:/Users/tatyana/Documents/Projects/Advance p
 HCC_Toxcast_CTD<-read.csv("file:///C:/Users/tatyana/Documents/Projects/Advance project/HCC_Toxcast_CTD.csv", header=TRUE)
 Unique_genes = HCC_Toxcast_CTD %>% distinct(lhs)
 
+
 GTX_all<-merge(TG_Gates_rat_log2fold_GTX,GTX_sampleID, by.x="sampleId",by.y="sampleId")
 
 #Filtering according to p value and fold change
@@ -198,7 +199,8 @@ NGTX_specific_2<-setdiff(NGTX_GL_genes, NC_GL_genes)
 NGTX_specific<-merge(NGTX_specific_1, NGTX_specific_2)
 
 NGTX_specific<-data.frame(NGTX_specific)
-
+NGTX_specific<- as.data.frame(apply(NGTX_specific,2,toupper))
+                                              
 ##Overlap between the ToxCast_CTD HCC-specific genes and TG Gates
 
 Genes_TGGATEs_CTD_Toxcast<-intersect(NGTX_specific, Unique_genes)
