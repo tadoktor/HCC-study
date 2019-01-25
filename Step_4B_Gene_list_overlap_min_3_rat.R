@@ -106,10 +106,10 @@ write.table(Probes,file=file.path(outDir, "Active_GTX_probes.csv"), sep=',', col
 
 
 ensembl <- useMart("ensembl")
-ensembl = useDataset("hsapiens_gene_ensembl",mart=ensembl)
+ensembl = useDataset("rnorvegicus_gene_ensembl",mart=ensembl)
 
-mapping_GTX <- getBM(attributes = c("affy_hg_u133_plus_2",
-                                    "ensembl_gene_id", "hgnc_symbol"), filters = "affy_hg_u133_plus_2",
+mapping_GTX <- getBM(attributes = c("affy_rat230_2",
+                                    "ensembl_gene_id", "rgd_symbol"), filters = "affy_rat230_2",
                      values = Probes, mart = ensembl)
 
 
@@ -142,8 +142,8 @@ write.table(NGTX_Probes,file=file.path(outDir, "Active_NGTX_probes.csv"), sep=',
 
 
 
-mapping_NGTX <- getBM(attributes = c("affy_hg_u133_plus_2",
-                                     "ensembl_gene_id", "hgnc_symbol"), filters = "affy_hg_u133_plus_2",
+mapping_NGTX <- getBM(attributes = c("affy_rat230_2",
+                                     "ensembl_gene_id", "rgd_symbol"), filters = "affy_rat230_2",
                       values = NGTX_Probes, mart = ensembl)
 
 
@@ -177,17 +177,17 @@ write.table(NC_Probes,file=file.path(outDir, "Active_NC_probes.csv"), sep=',', c
 
 
 
-mapping_NC <- getBM(attributes = c("affy_hg_u133_plus_2",
-                                   "ensembl_gene_id", "hgnc_symbol"), filters = "affy_hg_u133_plus_2",
+mapping_NC <- getBM(attributes = c("affy_rat230_2",
+                                   "ensembl_gene_id", "rgd_symbol"), filters = "affy_rat230_2",
                     values = NC_Probes, mart = ensembl)
 
 
 NC_GL_final <- mapping_NC[!duplicated(mapping_NC[,3]),] 
 
 ######Unique gene list indentification
-GTX_GL_genes<-unique(subset(GTX_GL_final, select=c("hgnc_symbol")))
-NGTX_GL_genes<-unique(subset(NGTX_GL_final, select=c("hgnc_symbol")))
-NC_GL_genes<-unique(subset(NC_GL_final, select=c("hgnc_symbol")))
+GTX_GL_genes<-unique(subset(GTX_GL_final, select=c("rgd_symbol")))
+NGTX_GL_genes<-unique(subset(NGTX_GL_final, select=c("rgd_symbol")))
+NC_GL_genes<-unique(subset(NC_GL_final, select=c("rgd_symbol")))
 
 ##Common genees between GTX, NGTX, NC
 Genes_common<-intersect(GTX_GL_genes, NGTX_GL_genes,NC_GL_genes)
@@ -204,16 +204,16 @@ NGTX_specific<-data.frame(NGTX_specific)
 Genes_TGGATEs_CTD_Toxcast<-intersect(NGTX_specific, Unique_genes)
 
 
-NGTX_induced_HCC_overlap<-merge(Genes_TGGATEs_CTD_Toxcast, HCC_Toxcast_CTD, by.x="hgnc_symbol", by.y="lhs")
+NGTX_induced_HCC_overlap<-merge(Genes_TGGATEs_CTD_Toxcast, HCC_Toxcast_CTD, by.x="rgd_symbol", by.y="lhs")
 
 NGTX<-rbind(NGTX_induced_HCC,NGTX_induced_HCC_overlap)
 
-collapsibleTree(df=NGTX, c("hgnc_symbol", "Major","Minor","Parent.Name"),  fill = "transparent")
+collapsibleTree(df=NGTX, c("rgd_symbol", "Major","Minor","Parent.Name"),  fill = "transparent")
 
-collapsibleTree(df=NGTX_induced_HCC_overlap, c("Major", "Minor","Parent.Name", "hgnc_symbol"),  fill = "lightgreen")
+collapsibleTree(df=NGTX_induced_HCC_overlap, c("Major", "Minor","Parent.Name", "rdg_symbol"),  fill = "lightgreen")
 
 
-collapsibleTree(df=NGTX_induced_HCC_overlap, c("hgnc_symbol", "Parent.Name"),  fill = "transparent")
+collapsibleTree(df=NGTX_induced_HCC_overlap, c("rgd_symbol", "Parent.Name"),  fill = "transparent")
 
-collapsibleTree(df=NGTX_induced_HCC_overlap, c("hgnc_symbol", "Major"),  fill = "transparent")
+collapsibleTree(df=NGTX_induced_HCC_overlap, c("rdg_symbol", "Major"),  fill = "transparent")
 
